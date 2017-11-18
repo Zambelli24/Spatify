@@ -14,4 +14,17 @@ class TestSpotifyConnector(TestCase):
 		sc = Spotify_Connector()
 		self.assertRaises(Exception, sc.related_artists, 'acsnjr')
 
+	def test_artist_search_small_list(self):
+		sc = Spotify_Connector()
+		artists = sc.artist_search('cupcakke')
+		self.assertEqual(2, len(artists))
+		self.assertEqual(['cupcakKe', 'Cupcakke'], artists)
 
+	def test_related_artists_small_list(self):
+		sc = Spotify_Connector()
+		artists = sc.related_artists('Katy Perry')
+		self.assertEqual(20, len(artists))
+
+	def test_track_search(self):
+		sc = Spotify_Connector()
+		sc.track_search('2Pac')

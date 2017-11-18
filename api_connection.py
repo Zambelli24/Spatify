@@ -33,9 +33,9 @@ class Spotify_Connector:
 		return list(artist_list.keys())
 
 	def related_artists(self, artist):
-		artists = self.get_artist_ids(artist)
+		artist_ids = self.get_artist_ids(artist)
 
-		url = 'https://api.spotify.com/v1/artists/{}/related-artists'.format(artists.get(artist))
+		url = 'https://api.spotify.com/v1/artists/{}/related-artists'.format(artist_ids.get(artist))
 		header = {'Authorization': 'Bearer ' + self.token}
 		r = requests.get(url, headers=header)
 		r.raise_for_status()
@@ -44,4 +44,27 @@ class Spotify_Connector:
 		for num in range(len(json_list)):
 			related_artists.append(json_list[num]['name'])
 		return related_artists
+
+	def track_search(self, artist):
+		artist_ids = self.get_artist_ids(artist)
+		albums = []
+		url = 'https://api.spotify.com/v1/artists/{}/albums'.format(artist_ids.get(artist))
+		header = {'Authorization': 'Bearer ' + self.token}
+		r = requests.get(url, headers=header)
+		r.raise_for_status()
+		json_list = r.json()['items']
+		for num in range(len(json_list)):
+			albums.append(json_list[num]['id'])
+
+		songs = []
+		for code in albums:
+			url = 'https://api.spotify.com/v1/albums/{}/tracks'.format(code)
+			header = {'Authorization': 'Bearer ' + self.token}
+			r = requests.get(url, headers=header)
+			r.raise_for_status()
+			json_list = r.json()['items']
+			for num in range(len(json_list)):
+				songs.append(json_list[num]['name'])
+		print(songs)
+
 
