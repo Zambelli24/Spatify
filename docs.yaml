@@ -1,0 +1,101 @@
+openapi: 3.0.0
+info:
+  title: Spatify API
+  description: This is the documentation for a Spotify-companion app, 'Spatify' that will extend the existing Spotify API's functionality by allowing a user to query all songs by a particular artist in one query.
+  version: 0.1.0
+paths:
+  /search_artist:
+    get:
+      summary: Get a list of artists matching the string query.
+      description: Allows the user to search Spotify for any artists that match the keyword search term. The term is a case-insensitive string and the search will return any artist where the name contains an exact match of the search term.
+
+        The return type is a list of strings.
+      parameters:
+        - name: artist
+          in: query
+          required: true
+          description: A string of Unicode characters representing the artist being searched for.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: A list of strings.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+                example:
+                 {
+                  artists:
+                    [
+                      "JanBoy",
+                      "JanBoy and The Min",
+                      "JanBoy and That Coleslaw"
+                    ]
+                  }
+        '400':
+          description: Used if the query parameter is missing or extra parameters are given.
+  /track_search:
+    get:
+      summary: Get a list of songs by a particular artist.
+      description: Allows the user to search Spotify for all tracks by a particular artist. The term is a case-sensitive string and MUST be an exact match.
+      parameters:
+        - name: artist
+          in: query
+          required: true
+          description: A string of Unicode characters representing the artist whose tracks are being searched for.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: A list of strings.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+                example:
+                 {
+                  tracks:
+                    [
+                      "Beats Don't Stop",
+                      "Commit To Your Choices",
+                      "Ding Dong"
+                    ]
+                  }
+        '400':
+          description: Used if the query parameter is missing or extra parameters are given.
+  /related_artists:
+    get:
+      summary: Get a list of artists related to a particular artist.
+      description: Allows the user to search Spotify for all artists related to a particular artist. The particular artist is represented by the search term. The term is a case-sensitive string and MUST be an exact match.
+      parameters:
+        - name: artist
+          in: query
+          required: true
+          description: A string of Unicode characters representing the artist for which .
+          schema:
+            type: string
+      responses:
+        '200':
+          description: A list of strings.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+                example:
+                 {
+                  artists:
+                    [
+                      "That Coleslaw",
+                      "The Min",
+                      "DJ Jazzy Jeff"
+                    ]
+                  }
+        '400':
+          description: Used if the query parameter is missing or extra parameters are given.
