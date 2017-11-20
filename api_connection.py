@@ -65,6 +65,6 @@ class Spotify_Connector:
 			json_list = r.json()['items']
 			for num in range(len(json_list)):
 				songs.append(json_list[num]['name'])
-		print(songs)
+		return songs
 
 

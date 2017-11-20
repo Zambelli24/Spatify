@@ -25,6 +25,7 @@ class TestSpotifyConnector(TestCase):
 		artists = sc.related_artists('Katy Perry')
 		self.assertEqual(20, len(artists))
 
-	def test_track_search(self):
+	def test_track_search_artist_with_few_songs(self):
 		sc = Spotify_Connector()
-		sc.track_search('2Pac')
+		tracks = sc.track_search('Cupcakke')
+		self.assertEqual(1, len(tracks))

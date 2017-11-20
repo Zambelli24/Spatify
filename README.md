@@ -5,6 +5,7 @@
 * spotipy
 * requests
 * flask
+* python 3
 
 ## Running the Program
 
