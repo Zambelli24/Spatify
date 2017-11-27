@@ -7,7 +7,7 @@ paths:
   /search_artist:
     get:
       summary: Get a list of artists matching the string query.
-      description: Allows the user to search Spotify for any artists that match the keyword search term. The term is a case-insensitive string and the search will return any artist where the name contains an exact match of the search term. If the artist's name has spaces in it, replace the spaces with the "+" character. If you are using Google Chrome, you may use spaces normally.
+      description: Allows the user to search Spotify for any artists that match the keyword search term. The term is a case-insensitive string and the search will return any artist where the name contains an exact match of the search term. If the artist's name has spaces in it, and the search returns an error, try replacing the spaces with "+".
 
         The return type is a list of strings.
       parameters:
