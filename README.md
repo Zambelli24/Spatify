@@ -10,7 +10,7 @@
 ## Running the Program
 
 You will ned to have a spotify account in order to use
-this program. Once you have create a spotify account,
+this program. Once you have created a spotify account,
 then you will need to register your application in order
 to get a client id and client secret. Follow this link
 to do so.
