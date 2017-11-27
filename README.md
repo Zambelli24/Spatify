@@ -6,6 +6,8 @@
 * requests
 * flask
 * python 3
+* celery
+* redis/redis-server
 
 ## Running the Program
 
