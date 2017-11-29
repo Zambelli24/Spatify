@@ -34,6 +34,11 @@ class FlaskAppTestCase(unittest.TestCase):
         search = self.app.get('/search_artist?artist=eurhv')
         assert b'[]' in search.data
 
+    def test_track_search_results_not_ready(self):
+        search = self.app.get('/track_search?artist=Eminem')
+        result_url = self.app.get(search.data)
+        assert b'Search Pending' in result_url.data
+
 
 if __name__ == '__main__':
     unittest.main()

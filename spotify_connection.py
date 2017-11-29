@@ -3,6 +3,7 @@ import spotipy.util as util
 import requests
 import os
 from celery import Celery
+import json
 
 client_id = os.environ['SPOTIFY_CLIENT_ID']
 client_secret = os.environ['SPOTIFY_CLIENT_SECRET']
@@ -30,7 +31,9 @@ def get_artist_ids(artist):
 def artist_search(artist):
 	artist_list = get_artist_ids(artist)
 
-	return list(artist_list.keys())
+	artists = {'artist': artist, 'results': list(artist_list.keys())}
+
+	return json.dumps(artists)
 
 def related_artists(artist):
 	artist_ids = get_artist_ids(artist)
@@ -40,10 +43,13 @@ def related_artists(artist):
 	r = requests.get(url, headers=header)
 	r.raise_for_status()
 	json_list = r.json()['artists']
-	related_artists = []
+	artists = []
+
 	for num in range(len(json_list)):
-		related_artists.append(json_list[num]['name'])
-	return related_artists
+		artists.append(json_list[num]['name'])
+	related_artists = {'artist': artist, 'results': artists}
+
+	return json.dumps(related_artists)
 
 @app.task
 def get_all_tracks(artist):
@@ -66,5 +72,6 @@ def get_all_tracks(artist):
 		json_list = r.json()['items']
 		for num in range(len(json_list)):
 			songs.append(json_list[num]['name'])
-	return songs
+	track_info = {'artist': artist, 'songs': songs}
+	return json.dumps(track_info)
 
