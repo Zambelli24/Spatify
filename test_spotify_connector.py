@@ -29,3 +29,16 @@ class TestSpotifyConnector(TestCase):
 
 	def test_track_search_not_real_artist(self):
 		self.assertRaises(Exception, get_all_tracks, 'neibvh')
+
+	def test_artist_search_with_spaces(self):
+		artists = artist_search('twenty+one+pilots')
+		self.assertEqual(1, len(artists))
+		self.assertEqual(['Twenty One Pilots'], artists)
+
+	def test_related_artists_with_spaces(self):
+		artists = related_artists('Fall Out Boy')
+		self.assertEqual(20, len(artists))
+
+	def test_track_search_with_spaces(self):
+		tracks = get_all_tracks("My Chemical Romance")
+		self.assertEqual(181, len(tracks))
