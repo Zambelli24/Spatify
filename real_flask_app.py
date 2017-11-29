@@ -1,6 +1,7 @@
 from flask import Flask, request, Response, redirect, url_for
 from spotify_connection import get_all_tracks, artist_search, related_artists
 import time
+import codecs
 from math import ceil
 
 
@@ -11,7 +12,8 @@ app = Flask(__name__)
 
 @app.route('/')
 def homepage():
-    return 'welcome to the api'
+    f = codecs.open("ui.html", 'r')
+    return f.read()
 
 
 @app.route('/search_artist')
