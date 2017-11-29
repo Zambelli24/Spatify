@@ -1,8 +1,8 @@
 from flask import Flask, request, Response, redirect, url_for
 from spotify_connection import get_all_tracks, artist_search, related_artists
 import time
-import codecs
 from math import ceil
+from flask import render_template
 
 
 name_unfilled_response = "Name parameter not filled. Must provide '?artist=[artist name]' following query."
@@ -11,9 +11,9 @@ app = Flask(__name__)
 
 
 @app.route('/')
-def homepage():
-    f = codecs.open("ui.html", 'r')
-    return f.read()
+@app.route('/<name>')
+def homepage(name=None):
+    return render_template('ui.html', name=name)
 
 
 @app.route('/search_artist')
