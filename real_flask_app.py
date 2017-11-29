@@ -13,10 +13,6 @@ app = Flask(__name__)
 def homepage():
     return 'welcome to the api'
 
-@app.route('/search_pending')
-def search_pending():
-    return redirect(url_for('track_search?artist={}'.format(pending_artist)))
-
 
 @app.route('/search_artist')
 def search_for_artists():
