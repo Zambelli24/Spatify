@@ -20,9 +20,24 @@
     </table>
 </ul>
 <script>
-    var scrt_var = 10;
-    document.getElementById("link").setAttribute("href", scrt_var);
+    var last = {{last_page}};
+    if ({{page}} != last) {
+        var str = http://0.0.0.0:5000/track_search_results/{{task_id}}/{{page+1}}
+    }
+    else {
+        var str = http://0.0.0.0:5000/track_search_results/{{task_id}}/{{page}}
+    }
 </script>
-<a href="link">Next</a>
+<a href={{str}}> Next </a>
+<br>
+<script>
+    if ({{page}} != 1) {
+        var str = http://0.0.0.0:5000/track_search_results/{{task_id}}/{{page-1}}
+    }
+    else {
+        var str = http://0.0.0.0:5000/track_search_results/{{task_id}}/{{page}}
+    }
+</script>
+<a href={{str}}> Previous </a>
 </body>
 </html>
