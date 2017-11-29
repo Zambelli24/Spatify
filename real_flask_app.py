@@ -1,6 +1,7 @@
 from flask import Flask, request, Response, redirect, url_for
 from spotify_connection import get_all_tracks, artist_search, related_artists
 import time
+from math import ceil
 
 
 name_unfilled_response = "Name parameter not filled. Must provide '?artist=[artist name]' following query."
@@ -36,12 +37,21 @@ def track_search():
 
     result = get_all_tracks.delay(artist)
 
-    return 'Song can be found at localhost:5000/track_search_results/{}'.format(result.task_id) #or str(result.get(timeout=1))
+    return 'Song can be found at localhost:5000/track_search_results/{}'.format(result.task_id)
 
-@app.route('/track_search_results/<task_id>')
-def show_results(task_id):
+@app.route('/track_search_results/<task_id>', defaults={'page':1})
+@app.route('/track_search_results/<task_id>/<int:page>')
+def show_results(task_id, page):
     songs = get_all_tracks.AsyncResult(task_id).get(timeout=1)
-    return str(songs)
+    pages = {}
+    num_pages = ceil(len(songs) / 10)
+    start_index = 0
+    for index in range(1, num_pages):
+        pages[index] = songs[start_index:index*10]
+        start_index = index*10
+    if not page:
+        return str(pages[1])
+    return str(pages[page])
 
 
 @app.route('/related_artists')
