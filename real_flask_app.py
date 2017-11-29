@@ -11,7 +11,7 @@ app = Flask(__name__)
 
 @app.route('/')
 def homepage():
-    return render_template('ui.html')
+    return render_template('homepage.html')
 
 
 @app.route('/search_artist')
@@ -20,7 +20,7 @@ def search_for_artists():
     if artist is None:
         return Response("{}".format(name_unfilled_response), status=400)
 
-    return str(artist_search(artist))
+    return render_template('artist_search.html', artists=artist_search(artist))
 
 
 @app.route('/track_search')
@@ -35,7 +35,8 @@ def track_search():
 
     return 'Song can be found at localhost:5000/track_search_results/{}'.format(result.task_id)
 
-@app.route('/track_search_results/<task_id>', defaults={'page':1})
+
+@app.route('/track_search_results/<task_id>', defaults={'page': 1})
 @app.route('/track_search_results/<task_id>/<int:page>')
 def show_results(task_id, page):
     songs = get_all_tracks.AsyncResult(task_id).get(timeout=1)
@@ -45,9 +46,8 @@ def show_results(task_id, page):
     for index in range(1, num_pages):
         pages[index] = songs[start_index:index*10]
         start_index = index*10
-    if not page:
-        return str(pages[1])
-    return str(pages[page])
+
+    return render_template('tracks.html', tracks=pages[page])
 
 
 @app.route('/related_artists')
@@ -57,7 +57,7 @@ def get_related_artists():
         return Response("{}".format(name_unfilled_response),
                         status=400)
 
-    return str(related_artists(artist))
+    return render_template('related_artists.html', artist=(related_artists(artist)))
 
 
 if __name__ == '__main__':
