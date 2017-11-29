@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<style>
+  body {background-color: forestgreen;}
+  h1 {color: black;}
+  td {color: white;}
+</style>
+<head>
+<title>Spatify: Artist Search</title>
+</head>
+<body>
+<h1>Artists That Matched Your Query</h1>
+<ul>
+    <table>
+    {% for artist in artists %}
+        <tr>
+            <td class="c1">{{artist}}</td>
+        </tr>
+    {% endfor %}
+    </table>
+</ul>
+</body>
+</html>

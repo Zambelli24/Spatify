@@ -1,5 +1,12 @@
 <!DOCTYPE html>
 <html>
+<style>
+  body {background-color: forestgreen;}
+  h1 {color: black;}
+  h3 {color: black;}
+  p {color: white;}
+  li {color: white;}
+</style>
 <head>
 <title>Spatify</title>
 </head>
@@ -7,6 +14,7 @@
 <h1>Spatify API</h1>
 <p>This is Spatify, the Spotify API companion that allows you to make more direct and specific queries about your favorite artists.</p>
 <ul>
+    <h3> http://localhost:5000/search_artist?artist=(your query)</h3>
   <li>If you wish to search for an artist, you must first find the artist id that Spotify assigns to them </li>
     <ul>
       <li>In order to do this, pass in the name of the artist you wish to find and one of two things will happen:
@@ -16,14 +24,17 @@
           </ul>
     </ul>
     <br>
+    <h3> http://localhost:5000/related_artists?artist=(your query)</h3>
   <li>If you have an artist in mind and would like to find related artists,</li>
     <ul>
         <li>simply pass the name of the artist as the search parameter and receive a list of related artists</li>
     </ul>
     <br>
+    <h3> http://localhost:5000/track_search?artist=(your query)</h3>
   <li>If you wish to search for all of the tracks by a particular artist,</li>
     <ul>
-        <li>pass the name of the artist as the search parameter and receive a list of all songs by that artist</li>
+        <li>pass the name of the artist as the search parameter and receive a redirection url to paste into the search bar </li>
+        <li>This url will give you all of the songs by that artist in pages consisting of ten items</li>
     </ul>
 </ul>
 </body>

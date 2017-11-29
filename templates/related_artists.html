@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<style>
+  body {background-color: forestgreen;}
+  h1 {color: black;}
+  table {color: white;}
+</style>
+<head>
+<title>Spatify: Related Artists</title>
+</head>
+<body>
+<h1>Similar Artists</h1>
+<ul>
+    <table>
+    {% for newArtist in artist %}
+        <tr>
+            <td class="c1">{{newArtist}}</td>
+        </tr>
+    {% endfor %}
+    </table>
+</ul>
+
+
+</body>
+</html>

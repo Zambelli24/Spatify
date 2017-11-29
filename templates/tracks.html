@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<style>
+  body {background-color: forestgreen;}
+  h1 {color: black;}
+  td {color: white;}
+</style>
+<head>
+<title>Spatify: Track Search</title>
+</head>
+<body>
+<h1>Tracks By Your Artist</h1>
+<ul>
+    <table>
+    {% for track in tracks %}
+        <tr>
+            <td class="c1">{{track}}</td>
+        </tr>
+    {% endfor %}
+    </table>
+</ul>
+<script>
+    var scrt_var = 10;
+    document.getElementById("link").setAttribute("href", scrt_var);
+</script>
+<a href="link">Next</a>
+</body>
+</html>
