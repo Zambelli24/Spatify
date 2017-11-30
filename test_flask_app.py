@@ -3,6 +3,8 @@ import unittest
 import real_flask_app
 import tempfile
 from spotify_connection import app
+import time
+import json
 
 class FlaskAppTestCase(unittest.TestCase):
 
@@ -10,7 +12,7 @@ class FlaskAppTestCase(unittest.TestCase):
         self.db_fd, real_flask_app.app.config['DATABASE'] = tempfile.mkstemp()
         real_flask_app.app.testing = True
         self.app = real_flask_app.app.test_client()
-        app.conf.update(CELERY_TASK_ALWAYS_EAGER=True)
+        #app.conf.update(CELERY_TASK_ALWAYS_EAGER=True)
 
     def tearDown(self):
         os.close(self.db_fd)
@@ -40,6 +42,20 @@ class FlaskAppTestCase(unittest.TestCase):
         search = self.app.get('/track_search?artist=Eminem')
         result_url = self.app.get(search.data)
         assert b'Search Pending' in result_url.data
+        time.sleep(5)
+        result_url2 = self.app.get(search.data)
+        assert b'Eminem' in result_url2.data
+
+    def test_artist_search_success(self):
+        search = self.app.get('/search_artist?artist=cupcakke')
+        assert b'Cupcakke' in search.data
+        assert b'cupcakKe' in search.data
+
+    def test_related_artists_success(self):
+        search = self.app.get('/related_artists?artist=50 Cent')
+        results = json.loads(search.data)
+        assert '50 Cent' == results['artist']
+        assert 20 == len(results['results'])
 
 
 if __name__ == '__main__':
