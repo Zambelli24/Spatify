@@ -2,6 +2,7 @@ import os
 import unittest
 import real_flask_app
 import tempfile
+from spotify_connection import app
 
 class FlaskAppTestCase(unittest.TestCase):
 
@@ -9,6 +10,7 @@ class FlaskAppTestCase(unittest.TestCase):
         self.db_fd, real_flask_app.app.config['DATABASE'] = tempfile.mkstemp()
         real_flask_app.app.testing = True
         self.app = real_flask_app.app.test_client()
+        app.conf.update(CELERY_TASK_ALWAYS_EAGER=True)
 
     def tearDown(self):
         os.close(self.db_fd)
