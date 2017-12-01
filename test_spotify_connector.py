@@ -13,7 +13,8 @@ class TestSpotifyConnector(TestCase):
 		self.assertEqual([], artists['results'])
 
 	def test_related_artists_no_matches(self):
-		self.assertRaises(Exception, related_artists, 'acsnjr')
+		artists = related_artists('acsnjr')
+		self.assertEqual('Artist name is not an exact match.', artists)
 
 	def test_artist_search_small_list(self):
 		artists = json.loads(artist_search('cupcakke'))
@@ -32,7 +33,8 @@ class TestSpotifyConnector(TestCase):
 		self.assertEqual(1, len(tracks['songs']))
 
 	def test_track_search_not_real_artist(self):
-		self.assertRaises(Exception, get_all_tracks, 'neibvh')
+		tracks = get_all_tracks('neibvh')
+		self.assertEqual('Artist name is not an exact match.', tracks)
 
 	def test_artist_search_with_spaces(self):
 		artists = json.loads(artist_search('twenty+one+pilots'))

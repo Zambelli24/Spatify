@@ -41,7 +41,8 @@ def related_artists(artist):
 	url = 'https://api.spotify.com/v1/artists/{}/related-artists'.format(artist_ids.get(artist))
 	header = {'Authorization': 'Bearer ' + token}
 	r = requests.get(url, headers=header)
-	r.raise_for_status()
+	if r.status_code != 200:
+		return "Artist name is not an exact match."
 	json_list = r.json()['artists']
 	artists = []
 
@@ -58,7 +59,8 @@ def get_all_tracks(artist):
 	url = 'https://api.spotify.com/v1/artists/{}/albums'.format(artist_ids.get(artist))
 	header = {'Authorization': 'Bearer ' + token}
 	r = requests.get(url, headers=header)
-	r.raise_for_status()
+	if r.status_code != 200:
+		return "Artist name is not an exact match."
 	json_list = r.json()['items']
 	for num in range(len(json_list)):
 		albums.append(json_list[num]['id'])
