@@ -9,7 +9,7 @@ paths:
       summary: Get a list of artists matching the string query.
       description: Allows the user to search Spotify for any artists that match the keyword search term. The term is a case-insensitive string and the search will return any artist where the name contains an exact match of the search term. If the artist's name has spaces in it, and the search returns an error, try replacing the spaces with "+".
 
-        The return type is a list of strings.
+        The return type is a json object.
       parameters:
         - name: artist
           in: query
@@ -19,28 +19,29 @@ paths:
             type: string
       responses:
         '200':
-          description: A list of strings.
+          description: A json array of artists.
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  type: string
-                example:
-                 {
+                type: object
+                properties:
                   artists:
-                    [
-                      "JanBoy",
-                      "JanBoy and The Min",
-                      "JanBoy and That Coleslaw"
-                    ]
-                  }
+                    type: object
+                    example:
+                     {
+                      Jan:
+                        [
+                          "JanBoy",
+                          "JanBoy and The Min",
+                          "JanBoy and That Coleslaw"
+                        ]
+                      }
         '400':
           description: Used if the query parameter is missing or extra parameters are given.
   /track_search:
     get:
       summary: Get a list of songs by a particular artist.
-      description: Allows the user to search Spotify for all tracks by a particular artist. The term is a case-sensitive string and MUST be an exact match.
+      description: Allows the user to search Spotify for all tracks by a particular artist. The term is a case-sensitive string and MUST be an exact match. Adding `/x` to the end of the url where x is the page number will allow you to view different pages. The return list of songs defaults to the first page of ten items and contains information about the current page, the total number of pages, and the total number of songs.
       parameters:
         - name: artist
           in: query
@@ -50,22 +51,24 @@ paths:
             type: string
       responses:
         '200':
-          description: A list of strings.
+          description: A json array of songs and page information.
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  type: string
-                example:
-                 {
-                  tracks:
-                    [
-                      "Beats Don't Stop",
-                      "Commit To Your Choices",
-                      "Ding Dong"
-                    ]
-                  }
+                type: object
+                properties:
+                    artist:
+                        type: object
+                        properties:
+                            JanBoy:
+                              type: object
+                              properties:
+                                tracks:
+                                  example:
+                                    [
+                                      "Beats Don't Stop",
+                                      "Commit To Your Choices"
+                                    ]
         '400':
           description: Used if the query parameter is missing or extra parameters are given.
   /related_artists:
@@ -81,21 +84,22 @@ paths:
             type: string
       responses:
         '200':
-          description: A list of strings.
+          description: A json array of artists.
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  type: string
-                example:
-                 {
-                  artists:
-                    [
-                      "That Coleslaw",
-                      "The Min",
-                      "DJ Jazzy Jeff"
-                    ]
-                  }
+                type: object
+                properties:
+                  related_artists:
+                    type: object
+                    example:
+                     {
+                      JanBoy:
+                        [
+                          "That Coleslaw",
+                          "The Min",
+                          "DJ Jazzy Jeff"
+                        ]
+                      }
         '400':
           description: Used if the query parameter is missing or extra parameters are given.
