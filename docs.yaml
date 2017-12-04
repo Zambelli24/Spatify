@@ -1,25 +1,23 @@
 openapi: 3.0.0
 info:
   title: Spatify API
-  description: This is the documentation for a Spotify-companion app, 'Spatify' that will extend the existing Spotify API's functionality by allowing a user to query all songs by a particular artist in one query.
+  description: This is the documentation for a Spotify-companion app, 'Spatify' that will extend the existing Spotify API's functionality. One of its main functions is that it allows a user to query all songs by a particular artist directly.
   version: 0.1.0
 paths:
   /search_artist:
     get:
       summary: Get a list of artists matching the string query.
-      description: Allows the user to search Spotify for any artists that match the keyword search term. The term is a case-insensitive string and the search will return any artist where the name contains an exact match of the search term. If the artist's name has spaces in it, and the search returns an error, try replacing the spaces with "+".
-
-        The return type is a json object.
+      description: Allows the user to search Spotify for any artists that match the keyword search term. The term is a case-insensitive string and the search will return any artist where the name contains a match of the search term. The return type is a json object.
       parameters:
         - name: artist
           in: query
           required: true
-          description: A string of Unicode characters representing the artist being searched for.
+          description: A string of Unicode characters representing the artist being searched for. If the artist's name contains spaces, replace the space with the `+` character instead.
           schema:
             type: string
       responses:
         '200':
-          description: A json array of artists.
+          description: Returns a json array of artists.
           content:
             application/json:
               schema:
@@ -27,28 +25,82 @@ paths:
                 properties:
                   artists:
                     type: object
-                    example:
-                     {
-                      Jan:
-                        [
-                          "JanBoy",
-                          "JanBoy and The Min",
-                          "JanBoy and That Coleslaw"
-                        ]
-                      }
+                example:
+                 {
+                  "artists": Jan,
+                  "results":
+                    [
+                      "JanBoy",
+                      "JanBoy and The Min",
+                    ]
+                  }
         '400':
           description: Used if the query parameter is missing or extra parameters are given.
-  /track_search:
+
+  /related_artists:
     get:
-      summary: Get a list of songs by a particular artist.
-      description: Allows the user to search Spotify for all tracks by a particular artist. The term is a case-sensitive string and MUST be an exact match. Adding `/x` to the end of the url where x is the page number will allow you to view different pages. The return list of songs defaults to the first page of ten items and contains information about the current page, the total number of pages, and the total number of songs.
+      summary: Get a list of artists related to a particular artist.
+      description: Allows the user to search Spotify for all artists related to a particular artist. The particular artist is represented by the search term. The term is a case-sensitive string and MUST be an exact match. The API will return a maximum of 20 related artists.
       parameters:
         - name: artist
           in: query
           required: true
-          description: A string of Unicode characters representing the artist whose tracks are being searched for.
+          description: A string of Unicode characters representing the artist for which you want to find related artists. This must be an exact match of the artist name received from `/search_artist`.
           schema:
             type: string
+      responses:
+        '200':
+          description: Returns a json array of artists.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  related_artists:
+                    type: object
+                example:
+                 {
+                  "artist": JanBoy,
+                  "results":
+                    [
+                      "The Min",
+                      "DJ Jazzy Jeff"
+                    ]
+                  }
+        '400':
+          description: Used if the query parameter is missing or extra parameters are given. If artist name is mispelled, "Artist name is not an exact match." will be returned.
+
+  /track_search:
+    get:
+      summary: Make a request for a list of all songs by a particular artist.
+      description: Allows the user to search Spotify for all tracks by a particular artist. The term is a case-sensitive string and MUST be an exact match. Adding `/x` to the end of the url where `x` is the page number will allow you to view different pages. The return list of songs defaults to the first page of ten items and contains information about the current page, the total number of pages, and the total number of songs.
+      parameters:
+        - name: artist
+          in: query
+          required: true
+          description: A string of Unicode characters representing the artist whose tracks are being searched for. Again, this must be an exact match of one the artist names returned from `/search_artist`.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Returns the `task_id` to be used in `/track_search_results` and `/track_search_status`.
+        '400':
+          description: Used if the query parameter is missing or extra parameters are given. If artist name is mispelled, "Artist name is not an exact match." will be returned.
+
+  /track_search_status:
+    get:
+      summary: Notifies the user as to whether or not the track search has been completed.
+      description: Once status 200 is returned, the user may proceed to call `/track_search_results`.
+      responses:
+        '200':
+          description: Used when the request has completed processing. Will return "Search complete."
+        '202':
+          description: Used if the request is valid and has begun processing but is not yet completed. Will return "Search pending."
+
+  /track_search_results:
+    get:
+      summary: Provides the user with the paginated list of songs by a particular artist.
+      description: The return list of songs defaults to the first page of ten items and contains information about the total number of pages, the current page, and the total number of songs.
       responses:
         '200':
           description: A json array of songs and page information.
@@ -58,48 +110,26 @@ paths:
                 type: object
                 properties:
                     artist:
-                        type: object
-                        properties:
-                            JanBoy:
-                              type: object
-                              properties:
-                                tracks:
-                                  example:
-                                    [
-                                      "Beats Don't Stop",
-                                      "Commit To Your Choices"
-                                    ]
-        '400':
-          description: Used if the query parameter is missing or extra parameters are given.
-  /related_artists:
-    get:
-      summary: Get a list of artists related to a particular artist.
-      description: Allows the user to search Spotify for all artists related to a particular artist. The particular artist is represented by the search term. The term is a case-sensitive string and MUST be an exact match. The API will return a maximum of 20 related artists.
-      parameters:
-        - name: artist
-          in: query
-          required: true
-          description: A string of Unicode characters representing the artist for which .
-          schema:
-            type: string
-      responses:
-        '200':
-          description: A json array of artists.
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  related_artists:
-                    type: object
-                    example:
-                     {
-                      JanBoy:
-                        [
-                          "That Coleslaw",
-                          "The Min",
-                          "DJ Jazzy Jeff"
-                        ]
-                      }
-        '400':
-          description: Used if the query parameter is missing or extra parameters are given.
+                      type: string
+                    songs:
+                      type: array
+                      items:
+                        type: string
+                    total_pages:
+                      type: integer
+                    current_pages:
+                      type: integer
+                    total_songs:
+                      type: integer
+                example:
+                  {
+                    "artist": "JanBoy",
+                    "songs":
+                    [
+                      "Beats Don't Stop",
+                      "Commit To Your Choices"
+                    ],
+                      "total_pages": 5,
+                      "current_pages": 2,
+                      "total_songs": 56
+                  }
