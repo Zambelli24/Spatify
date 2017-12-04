@@ -3,17 +3,18 @@ from spotify_connection import get_all_tracks, artist_search, related_artists
 from math import ceil
 from flask import render_template
 import json
+from celery_wrapper import Celery_Wrapper
 
 
 name_unfilled_response = "Name parameter not filled. Must provide '?artist=[artist name]' following query."
 
 app = Flask(__name__)
 
+celery = Celery_Wrapper()
 
 @app.route('/')
 def homepage():
     return render_template('homepage.html')
-
 
 @app.route('/search_artist')
 def search_for_artists():
@@ -22,7 +23,7 @@ def search_for_artists():
         return Response("{}".format(name_unfilled_response), status=400)
 
     #return render_template('artist_search.html', artists=artist_search(artist))
-    return Response(artist_search(artist), status=200)
+    return Response(celery.search_for_artist(artist), status=200)
 
 @app.route('/track_search')
 def track_search():
@@ -31,14 +32,14 @@ def track_search():
         return Response("{}".format(name_unfilled_response),
                         status=400)
 
-    result = get_all_tracks.delay(artist)
+    result = celery.start_track_search_get_id(artist)
 
-    return Response(result.task_id, status=200)
+    return Response(result, status=200)
 
 @app.route('/track_search_status/<task_id>')
 def get_status(task_id):
-    celery_task = get_all_tracks.AsyncResult(task_id)
-    if not celery_task.ready():
+    celery_task = celery.get_tracks_ready_status(task_id)
+    if not celery_task:
         return Response('Search Pending', status=202)
     else:
         return Response('Search is complete', status=200)
@@ -47,12 +48,12 @@ def get_status(task_id):
 @app.route('/track_search_results/<task_id>', defaults={'page': 1})
 @app.route('/track_search_results/<task_id>/<int:page>')
 def show_results(task_id, page):
-    celery_task = get_all_tracks.AsyncResult(task_id)
+    celery_tracks = celery.get_all_tracks(task_id)
 
-    if celery_task.get() == 'Artist name is not an exact match.':
-        return Response(celery_task.get(), status=400)
+    if celery_tracks == 'Artist name is not an exact match.':
+        return Response(celery_tracks, status=400)
 
-    songs = json.loads(celery_task.get())
+    songs = json.loads(celery_tracks)
 
     pages = {}
     num_pages = ceil(len(songs['songs']) / 10)
@@ -82,7 +83,7 @@ def get_related_artists():
     if related_artists(artist) == 'Artist name is not an exact match.':
         return Response(related_artists(artist), status=400)
 
-    return Response(related_artists(artist), status=200)
+    return Response(celery.get_related_artists(artist), status=200)
 
 if __name__ == '__main__':
     app.run(debug=True, host="0.0.0.0", port=5000)
