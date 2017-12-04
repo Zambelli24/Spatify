@@ -13,7 +13,6 @@ class Mock_Celery_Wrapper:
 		self.em_task_id = '3892752'
 		self.pac_task_id = '93478854'
 		self.bob_task_id = '30942758'
-		self.searched_artist = ''
 
 	def start_track_search_get_id(self, artist):
 		if artist not in self.artists:
@@ -42,10 +41,20 @@ class Mock_Celery_Wrapper:
 			return self.return_value
 
 	def get_related_artists(self, artist):
-		return related_artists(artist)
+		names = ['Eminem', '2Pac', 'Dr. Dre']
+		if artist == '50 Cent':
+			ret_obj = {'artist': '50 Cent', 'results': names}
+			return json.dumps(ret_obj)
+		else:
+			return json.dumps([])
 
 	def search_for_artist(self, artist):
-		return artist_search(artist)
+		names = ['Cupcakke', 'cupcakKe']
+		if artist == 'cupcakke':
+			ret_obj = {'artist': 'cupcakke', 'results': names}
+			return json.dumps(ret_obj)
+		else:
+			return json.dumps([])
 
 	def change_ready_status(self):
 		self.ready = True

@@ -53,7 +53,7 @@ class FlaskAppTestCase(unittest.TestCase):
         search = self.app.get('/related_artists?artist=50 Cent')
         results = json.loads(search.data)
         assert '50 Cent' == results['artist']
-        assert 20 == len(results['results'])
+        assert 3 == len(results['results'])
 
     def test_track_search_bad_artist_name(self):
         search = self.app.get('/track_search?artist=joe')
